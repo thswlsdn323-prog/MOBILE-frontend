@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-// import { login } from '../services/authService'  // 임시 주석 처리
+import { login } from '../services/authService'
 import './Login.css'
 
 function Login() {
@@ -32,37 +32,27 @@ function Login() {
 
     setLoading(true)
 
-    // ── 임시: DB 체크 로직 주석 처리 ──────────────────────
-    // try {
-    //   const data = await login(userId, password)
-    //   if (remember) {
-    //     localStorage.setItem('mes_uid', userId)
-    //   } else {
-    //     localStorage.removeItem('mes_uid')
-    //   }
-    //   localStorage.setItem('mes_token', data.token)
-    //   localStorage.setItem('mes_user', JSON.stringify(data.user))
-    // } catch (err) {
-    //   const msg = err.response?.data?.message || '로그인에 실패했습니다.'
-    //   setError(msg)
-    //   setLoading(false)
-    //   return
-    // }
-    // ──────────────────────────────────────────────────────
+    try {
+      const data = await login(userId, password)
 
-    // 임시: 아이디 저장만 처리 후 바로 대시보드로 이동
-    if (remember) {
-      localStorage.setItem('mes_uid', userId)
-    } else {
-      localStorage.removeItem('mes_uid')
+      // 아이디 저장 처리
+      if (remember) {
+        localStorage.setItem('mes_uid', userId)
+      } else {
+        localStorage.removeItem('mes_uid')
+      }
+
+      // JWT 토큰 및 사용자 정보 저장
+      localStorage.setItem('mes_token', data.token)
+      localStorage.setItem('mes_user', JSON.stringify(data.user))
+
+      navigate('/dashboard')
+    } catch (err) {
+      const msg = err.response?.data?.message || '로그인에 실패했습니다.'
+      setError(msg)
+    } finally {
+      setLoading(false)
     }
-
-    // 임시 토큰 세팅 (PrivateRoute 통과용)
-    localStorage.setItem('mes_token', 'temp_token')
-    localStorage.setItem('mes_user', JSON.stringify({ userId, userNm: userId }))
-
-    setLoading(false)
-    navigate('/dashboard')
   }
 
   return (

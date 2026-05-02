@@ -1,17 +1,25 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import basicSsl from '@vitejs/plugin-basic-ssl'
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    basicSsl()
+  ],
   server: {
     port: 12345,
     host: true,
+    https: true,
     proxy: {
-      // /api 로 시작하는 요청은 전부 백엔드로 전달
       '/api': {
         target: 'http://localhost:3000',
         changeOrigin: true,
-      }
+      },
+      '/GR': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+      },
     }
   }
 })

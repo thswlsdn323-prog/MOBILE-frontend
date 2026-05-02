@@ -1,97 +1,48 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import Layout from '../components/Layout'
-import QrScanner from '../components/QrScanner'
+import Layout from '../../components/Layout'
+import QrScanner from '../../components/QrScanner'
+import { useDashboard } from './useDashboard'
+
+/* ── 아이콘 모음 ───────────────────────────────────────── */
+const Icons = {
+  qr: (
+    <svg width="28" height="28" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
+      <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+      <rect x="3" y="14" width="7" height="7"/>
+      <path d="M14 14h3v3m0 4h4m-4 0v-4m-3 4h-1m1-4h-1v-1"/>
+    </svg>
+  ),
+  prod: (
+    <svg width="28" height="28" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
+      <path d="M2 20h20M6 20V10l6-6 6 6v10M10 20v-5h4v5"/>
+    </svg>
+  ),
+  equip: (
+    <svg width="28" height="28" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="3"/>
+      <path d="M19.07 4.93A10 10 0 1 0 4.93 19.07 10 10 0 0 0 19.07 4.93z"/>
+      <path d="M12 2v2M12 20v2M2 12h2M20 12h2"/>
+    </svg>
+  ),
+  quality: (
+    <svg width="28" height="28" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
+      <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+    </svg>
+  ),
+}
 
 function Dashboard() {
-  const navigate = useNavigate()
-  const [showQr, setShowQr] = useState(false)
-  const [qrResult, setQrResult] = useState(null)
-
-  const handleQrScan = (result) => {
-    setQrResult(result)
-    setShowQr(false)
-  }
-
-  // 상단 카드 목록
-  const topCards = [
-    {
-      id: 'qr',
-      icon: (
-        <svg width="28" height="28" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
-          <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
-          <rect x="3" y="14" width="7" height="7"/>
-          <path d="M14 14h3v3m0 4h4m-4 0v-4m-3 4h-1m1-4h-1v-1"/>
-        </svg>
-      ),
-      label: 'QR 스캔',
-      desc: '작업지시 / 자재 조회',
-      color: '#4f8ef7',
-      bg: '#eef4ff',
-      action: () => setShowQr(true),
-    },
-    {
-      id: 'prod',
-      icon: (
-        <svg width="28" height="28" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
-          <path d="M2 20h20M6 20V10l6-6 6 6v10M10 20v-5h4v5"/>
-        </svg>
-      ),
-      label: '생산 현황',
-      desc: '실시간 생산 모니터링',
-      color: '#20c997',
-      bg: '#eafaf5',
-      action: () => {},
-    },
-    {
-      id: 'equip',
-      icon: (
-        <svg width="28" height="28" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
-          <circle cx="12" cy="12" r="3"/>
-          <path d="M19.07 4.93A10 10 0 1 0 4.93 19.07 10 10 0 0 0 19.07 4.93z"/>
-          <path d="M12 2v2M12 20v2M2 12h2M20 12h2"/>
-        </svg>
-      ),
-      label: '설비 상태',
-      desc: '설비 가동 현황',
-      color: '#fd7e14',
-      bg: '#fff4e6',
-      action: () => {},
-    },
-    {
-      id: 'quality',
-      icon: (
-        <svg width="28" height="28" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
-          <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
-        </svg>
-      ),
-      label: '품질 지표',
-      desc: '불량률 / 검사 현황',
-      color: '#e83e8c',
-      bg: '#fdf0f7',
-      action: () => {},
-    },
-  ]
-
-  // 창고관리 바로가기 카드
-  const warehouseCards = [
-    { label: '입고관리', path: '/receiving', color: '#4f8ef7', bg: '#eef4ff' },
-    { label: '입고내역조회', path: '/receiving-history', color: '#4f8ef7', bg: '#e8f0ff' },
-    { label: '출고관리', path: '/release', color: '#20c997', bg: '#eafaf5' },
-    { label: '출고내역조회', path: '/release-history', color: '#20c997', bg: '#e2f8f2' },
-    { label: '출하관리', path: '/shipment', color: '#fd7e14', bg: '#fff4e6' },
-    { label: '출하내역조회', path: '/shipment-history', color: '#fd7e14', bg: '#ffeedd' },
-  ]
-
-  // 하단 요약 카드
-  const summaryCards = [
-    { label: '금일 생산량', value: '-', unit: 'EA' },
-    { label: '가동률', value: '-', unit: '%' },
-    { label: '불량률', value: '-', unit: '%' },
-    { label: '작업지시', value: '-', unit: '건' },
-  ]
-
-  const user = JSON.parse(localStorage.getItem('mes_user') || '{}')
+  const {
+    user,
+    showQr,
+    qrResult,
+    topCards,
+    warehouseCards,
+    summaryCards,
+    handleQrScan,
+    handleQrClose,
+    handleQrResultClose,
+    navigate,
+  } = useDashboard()
 
   return (
     <Layout title="대시보드">
@@ -110,10 +61,7 @@ function Dashboard() {
             <strong className="small">QR 인식 결과</strong>
             <div className="small mt-1" style={{ wordBreak: 'break-all' }}>{qrResult}</div>
           </div>
-          <button
-            className="btn-close btn-close-sm flex-shrink-0 mt-1"
-            onClick={() => setQrResult(null)}
-          />
+          <button className="btn-close btn-close-sm flex-shrink-0 mt-1" onClick={handleQrResultClose} />
         </div>
       )}
 
@@ -137,7 +85,7 @@ function Dashboard() {
                   color: card.color,
                   marginBottom: 12,
                 }}>
-                  {card.icon}
+                  {Icons[card.icon]}
                 </div>
                 <p className="fw-semibold mb-1 small">{card.label}</p>
                 <p className="text-muted mb-0" style={{ fontSize: 11 }}>{card.desc}</p>
@@ -162,10 +110,7 @@ function Dashboard() {
               onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
             >
               <div className="card-body p-3 d-flex align-items-center gap-2">
-                <div style={{
-                  width: 8, height: 8, borderRadius: '50%',
-                  background: card.color, flexShrink: 0,
-                }} />
+                <div style={{ width: 8, height: 8, borderRadius: '50%', background: card.color, flexShrink: 0 }} />
                 <span style={{ fontSize: 13, fontWeight: 500, color: '#333' }}>{card.label}</span>
               </div>
             </div>
@@ -195,10 +140,7 @@ function Dashboard() {
 
       {/* QR 스캐너 모달 */}
       {showQr && (
-        <QrScanner
-          onScan={handleQrScan}
-          onClose={() => setShowQr(false)}
-        />
+        <QrScanner onScan={handleQrScan} onClose={handleQrClose} />
       )}
     </Layout>
   )
