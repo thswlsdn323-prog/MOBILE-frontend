@@ -6,11 +6,11 @@ const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString().slice(0, 10)
 
 export function useReceivingHistory() {
   // ── 검색 조건 ──────────────────────────────────────────────────────────────
-  const [startDate,    setStartDate]    = useState(weekAgo)
-  const [endDate,      setEndDate]      = useState(today)
-  const [itemCode,     setItemCode]     = useState('')   // 품번
-  const [itemName,     setItemName]     = useState('')   // 품명
-  const [spec,         setSpec]         = useState('')   // 규격
+  const [SDATE,        setStartDate]    = useState(weekAgo)
+  const [EDATE,        setEndDate]      = useState(today)
+  const [ITEM_CD,      setItemCode]     = useState('')   // 품번
+  const [ITEM_NM,      setItemName]     = useState('')   // 품명
+  const [ITEM_DC,      setSpec]         = useState('')   // 규격
   const [statusFilter, setStatusFilter] = useState('')
 
   // ── 결과 / UI 상태 ─────────────────────────────────────────────────────────
@@ -25,11 +25,13 @@ export function useReceivingHistory() {
 
     try {
       const params = {
-        fromDate: startDate,
-        toDate:   endDate,
-        itemCode: itemCode.trim(),
-        itemName: itemName.trim(),
-        spec:     spec.trim(),
+        COMP:     '1000',
+        FACT:     '1000',
+        SDATE:    SDATE.replace(/-/g, ''),
+        EDATE:    EDATE.replace(/-/g, ''),
+        ITEM_CD:  ITEM_CD.trim(),
+        ITEM_NM:  ITEM_NM.trim(),
+        ITEM_DC:  ITEM_DC.trim(),
       }
 
       const res = await api.get('/GR/GrSearch', { params })
@@ -57,7 +59,7 @@ export function useReceivingHistory() {
     } finally {
       setIsLoading(false)
     }
-  }, [startDate, endDate, itemCode, itemName, spec, statusFilter])
+  }, [SDATE, EDATE, ITEM_CD, ITEM_NM, ITEM_DC, statusFilter])
 
   // ── 검색 조건 초기화 ───────────────────────────────────────────────────────
   const handleReset = () => {
@@ -81,11 +83,11 @@ export function useReceivingHistory() {
 
   return {
     // 검색 조건
-    startDate,    setStartDate,
-    endDate,      setEndDate,
-    itemCode,     setItemCode,
-    itemName,     setItemName,
-    spec,         setSpec,
+    SDATE,        setStartDate,
+    EDATE,        setEndDate,
+    ITEM_CD,      setItemCode,
+    ITEM_NM,      setItemName,
+    ITEM_DC,      setSpec,
     statusFilter, setStatusFilter,
     // 결과 / UI 상태
     dataList,

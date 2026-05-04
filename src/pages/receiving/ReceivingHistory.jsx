@@ -3,11 +3,11 @@ import { useReceivingHistory } from './useReceivingHistory'
 
 function ReceivingHistory() {
   const {
-    startDate,    setStartDate,
-    endDate,      setEndDate,
-    itemCode,     setItemCode,
-    itemName,     setItemName,
-    spec,         setSpec,
+    SDATE,        setStartDate,
+    EDATE,        setEndDate,
+    ITEM_CD,      setItemCode,
+    ITEM_NM,      setItemName,
+    ITEM_DC,      setSpec,
     statusFilter, setStatusFilter,
     dataList,
     counts,
@@ -35,7 +35,7 @@ function ReceivingHistory() {
               <input
                 type="date"
                 className="form-control form-control-sm"
-                value={startDate}
+                value={SDATE}
                 onChange={e => setStartDate(e.target.value)}
               />
             </div>
@@ -46,7 +46,7 @@ function ReceivingHistory() {
               <input
                 type="date"
                 className="form-control form-control-sm"
-                value={endDate}
+                value={EDATE}
                 onChange={e => setEndDate(e.target.value)}
               />
             </div>
@@ -58,7 +58,7 @@ function ReceivingHistory() {
                 type="text"
                 className="form-control form-control-sm"
                 placeholder="품번 입력"
-                value={itemCode}
+                value={ITEM_CD}
                 onChange={e => setItemCode(e.target.value)}
               />
             </div>
@@ -85,7 +85,7 @@ function ReceivingHistory() {
                 type="text"
                 className="form-control form-control-sm"
                 placeholder="품명 입력"
-                value={itemName}
+                value={ITEM_NM}
                 onChange={e => setItemName(e.target.value)}
               />
             </div>
@@ -97,7 +97,7 @@ function ReceivingHistory() {
                 type="text"
                 className="form-control form-control-sm"
                 placeholder="규격 입력"
-                value={spec}
+                value={ITEM_DC}
                 onChange={e => setSpec(e.target.value)}
               />
             </div>
@@ -154,73 +154,109 @@ function ReceivingHistory() {
         ))}
       </div>
 
-      {/* 목록 테이블 */}
-      <div className="card border-0 shadow-sm">
-        <div className="card-body p-0">
-          <div className="table-responsive">
-            <table className="table table-hover mb-0" style={{ fontSize: 13 }}>
-              <thead style={{ background: '#f8f9fa' }}>
-                <tr>
-                  <th className="px-3 py-2 text-muted fw-semibold" style={{ fontSize: 12 }}>입고번호</th>
-                  <th className="px-3 py-2 text-muted fw-semibold" style={{ fontSize: 12 }}>입고일자</th>
-                  <th className="px-3 py-2 text-muted fw-semibold" style={{ fontSize: 12 }}>품번 / 품명</th>
-                  <th className="px-3 py-2 text-muted fw-semibold" style={{ fontSize: 12 }}>규격</th>
-                  <th className="px-3 py-2 text-muted fw-semibold" style={{ fontSize: 12 }}>수량</th>
-                  <th className="px-3 py-2 text-muted fw-semibold" style={{ fontSize: 12 }}>상태</th>
-                </tr>
-              </thead>
-              <tbody>
-                {isLoading ? (
-                  <tr>
-                    <td colSpan={6} className="text-center py-5">
-                      <div className="spinner-border text-primary" style={{ width: 28, height: 28 }} role="status" />
-                      <div className="text-muted small mt-2">데이터를 불러오는 중...</div>
-                    </td>
-                  </tr>
-                ) : dataList.length === 0 ? (
-                  <tr>
-                    <td colSpan={6} className="text-center text-muted py-5" style={{ fontSize: 13 }}>
-                      조회된 데이터가 없습니다.
-                    </td>
-                  </tr>
-                ) : (
-                  dataList.map((r, idx) => {
-                    const stColor =
-                      r.status === 'C' ? '#20c997' :
-                      r.status === 'P' ? '#4f8ef7' : '#dc3545'
-                    const stText =
-                      r.status === 'C' ? '완료' :
-                      r.status === 'P' ? '처리중' : '취소'
-                    return (
-                      <tr key={r.recvNo ?? idx}>
-                        <td className="px-3 py-2" style={{ fontSize: 11, color: '#888' }}>
-                          {r.recvNo}
-                        </td>
-                        <td className="px-3 py-2">{r.recvDate}</td>
-                        <td className="px-3 py-2 fw-semibold">
-                          {r.itemName}
-                          <div style={{ fontSize: 11, color: '#aaa' }}>{r.itemCode}</div>
-                        </td>
-                        <td className="px-3 py-2" style={{ fontSize: 12, color: '#666' }}>
-                          {r.spec ?? '-'}
-                        </td>
-                        <td className="px-3 py-2">
-                          {r.qty} {r.unit ?? ''}
-                        </td>
-                        <td className="px-3 py-2">
-                          <span className="fw-semibold" style={{ fontSize: 12, color: stColor }}>
-                            {stText}
-                          </span>
-                        </td>
-                      </tr>
-                    )
-                  })
-                )}
-              </tbody>
-            </table>
-          </div>
+      {/* 목록 카드 */}
+      {isLoading ? (
+        <div className="text-center py-5">
+          <div className="spinner-border text-primary" style={{ width: 28, height: 28 }} role="status" />
+          <div className="text-muted small mt-2">데이터를 불러오는 중...</div>
         </div>
-      </div>
+      ) : dataList.length === 0 ? (
+        <div className="text-center text-muted py-5" style={{ fontSize: 13 }}>
+          조회된 데이터가 없습니다.
+        </div>
+      ) : (
+        <div className="d-flex flex-column gap-2">
+          {dataList.map((r, idx) => {
+            const stColor =
+              r.status === 'C' ? '#20c997' :
+              r.status === 'P' ? '#4f8ef7' : '#dc3545'
+            const stBg =
+              r.status === 'C' ? '#e8faf5' :
+              r.status === 'P' ? '#eaf1fe' : '#fdecea'
+            const stText =
+              r.status === 'C' ? '완료' :
+              r.status === 'P' ? '처리중' : '취소'
+
+            return (
+              <div
+                key={`${r.GR_NO}-${r.GR_SQ}-${idx}`}
+                className="card border-0 shadow-sm"
+                style={{ borderRadius: 10 }}
+              >
+                <div className="card-body px-3 py-2">
+
+                  {/* ── 1행: 입고번호 / 입고일자 / 상태 ── */}
+                  <div className="d-flex align-items-center justify-content-between mb-1">
+                    <span style={{ fontSize: 12, color: '#888', fontWeight: 500 }}>
+                      {r.GR_NO}
+                      {r.GR_SQ && (
+                        <span style={{ color: '#bbb' }}> -{r.GR_SQ}</span>
+                      )}
+                    </span>
+                    <div className="d-flex align-items-center gap-2">
+                      <span style={{ fontSize: 12, color: '#999' }}>{r.GR_DT}</span>
+                      <span
+                        style={{
+                          fontSize: 11,
+                          fontWeight: 600,
+                          color: stColor,
+                          background: stBg,
+                          borderRadius: 20,
+                          padding: '2px 8px',
+                        }}
+                      >
+                        {stText}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* ── 2행: 품명·품번·규격 / 수량 ── */}
+                  <div className="d-flex align-items-start justify-content-between">
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      {/* 품명 */}
+                      <div
+                        className="fw-semibold text-truncate"
+                        style={{ fontSize: 14, color: '#222' }}
+                      >
+                        {r.ITEM_NM}
+                      </div>
+                      {/* 품번 · 규격 */}
+                      <div style={{ fontSize: 11, color: '#aaa', marginTop: 1 }}>
+                        {r.ITEM_CD}
+                        {r.ITEM_DC && <span style={{ margin: '0 5px', color: '#ddd' }}>|</span>}
+                        {r.ITEM_DC && <span>{r.ITEM_DC}</span>}
+                      </div>
+                      {/* LOT · 창고 / 장소 */}
+                      <div style={{ fontSize: 11, color: '#bbb', marginTop: 2 }}>
+                        {r.LOT_NB && (
+                          <span><span style={{ color: '#ccc' }}>LOT</span> {r.LOT_NB}</span>
+                        )}
+                        {r.LOT_NB && (r.WH_NM || r.LC_NM) && (
+                          <span style={{ margin: '0 5px', color: '#ddd' }}>·</span>
+                        )}
+                        {(r.WH_NM || r.LC_NM) && (
+                          <span>{r.WH_NM}{r.LC_NM ? ` / ${r.LC_NM}` : ''}</span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* 수량 */}
+                    <div className="text-end ms-3" style={{ flexShrink: 0 }}>
+                      <span style={{ fontSize: 20, fontWeight: 700, color: '#333' }}>
+                        {Number(r.QTY).toLocaleString()}
+                      </span>
+                      <span style={{ fontSize: 11, color: '#aaa', marginLeft: 3 }}>
+                        {r.ITEM_UNIT ?? ''}
+                      </span>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      )}
     </Layout>
   )
 }
