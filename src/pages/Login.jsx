@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { login } from '../services/authService'
+import { useAppContext } from '../context/AppContext'
 import CompanySearchModal from '../components/modal/CompanySearchModal'
 import WorkplaceSearchModal from '../components/modal/WorkplaceSearchModal'
 import './Login.css'
 
 function Login() {
   const navigate = useNavigate()
+  const { setSession } = useAppContext()
   const [userId, setUserId] = useState('')
   const [password, setPassword] = useState('')
   const [showPw, setShowPw] = useState(false)
@@ -67,12 +69,10 @@ function Login() {
     setLoading(true)
 
     try {
-      const data = await login(
-        userId,
-        password,
-        selectedCompany.companyCode,
-        selectedWorkplace.workplaceCode
-      )
+      const COMP = selectedCompany.companyCode
+      const FACT = selectedWorkplace.workplaceCode
+
+      const data = await login(userId, password, COMP, FACT)
 
       if (remember) {
         localStorage.setItem('mes_uid', userId)
@@ -82,6 +82,9 @@ function Login() {
 
       localStorage.setItem('mes_token', data.token)
       localStorage.setItem('mes_user', JSON.stringify(data.user))
+
+      // 전역 컨텍스트에 COMP / FACT 저장
+      setSession({ COMP, FACT })
 
       navigate('/dashboard')
     } catch (err) {

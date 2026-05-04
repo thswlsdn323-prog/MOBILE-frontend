@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { AppProvider } from './context/AppContext'
 import Login from './pages/Login'
 import Dashboard from './pages/dashboard/Dashboard'
 import ReceivingManage from './pages/receiving/ReceivingManage'
@@ -40,6 +41,7 @@ function PrivateRoute({ children }) {
 
 function App() {
   return (
+    <AppProvider>
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<Login />} />
@@ -58,6 +60,7 @@ function App() {
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>
+    </AppProvider>
   )
 }
 

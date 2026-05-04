@@ -1,10 +1,12 @@
 import { useState, useCallback } from 'react'
 import api from '../../services/api'
+import { useAppContext } from '../../context/AppContext'
 
 const today   = new Date().toISOString().slice(0, 10)
 const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString().slice(0, 10)
 
 export function useReceivingHistory() {
+  const { COMP, FACT } = useAppContext()
   // ── 검색 조건 ──────────────────────────────────────────────────────────────
   const [SDATE,        setStartDate]    = useState(weekAgo)
   const [EDATE,        setEndDate]      = useState(today)
@@ -25,8 +27,8 @@ export function useReceivingHistory() {
 
     try {
       const params = {
-        COMP:     '1000',
-        FACT:     '1000',
+        COMP,
+        FACT,
         SDATE:    SDATE.replace(/-/g, ''),
         EDATE:    EDATE.replace(/-/g, ''),
         ITEM_CD:  ITEM_CD.trim(),

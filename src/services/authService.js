@@ -1,12 +1,12 @@
 import api from './api'
 
 // 로그인 (회사코드, 사업장코드 포함)
-export const login = async (userId, password, companyCode, workplaceCode) => {
+export const login = async (userId, password, COMP, FACT) => {
   const response = await api.post('/api/auth/login', {
     userId,
     password,
-    companyCode,
-    workplaceCode,
+    COMP,
+    FACT,
   })
   return response.data
 }
