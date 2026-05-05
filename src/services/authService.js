@@ -1,6 +1,7 @@
-import api from './api'
+import api, { clearTokens } from './api'
 
 // 로그인 (회사코드, 사업장코드 포함)
+// 응답: { accessToken, refreshToken, user }
 export const login = async (userId, password, COMP, FACT) => {
   const response = await api.post('/api/auth/login', {
     userId,
@@ -11,13 +12,13 @@ export const login = async (userId, password, COMP, FACT) => {
   return response.data
 }
 
-// 로그아웃
+// 로그아웃: 서버에 refresh token 폐기 요청 후 로컬 클리어
 export const logout = async () => {
   try {
-    await api.post('/api/auth/logout')
+    const refreshToken = localStorage.getItem('mes_refresh_token')
+    await api.post('/api/auth/logout', { refreshToken })
   } finally {
-    localStorage.removeItem('mes_token')
-    localStorage.removeItem('mes_user')
+    clearTokens()
     localStorage.removeItem('mes_company')
     localStorage.removeItem('mes_workplace')
   }

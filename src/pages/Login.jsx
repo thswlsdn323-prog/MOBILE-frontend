@@ -80,7 +80,8 @@ function Login() {
         localStorage.removeItem('mes_uid')
       }
 
-      localStorage.setItem('mes_token', data.token)
+      localStorage.setItem('mes_access_token', data.accessToken)
+      localStorage.setItem('mes_refresh_token', data.refreshToken)
       localStorage.setItem('mes_user', JSON.stringify(data.user))
 
       // 전역 컨텍스트에 COMP / FACT 저장

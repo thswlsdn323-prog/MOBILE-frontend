@@ -14,24 +14,24 @@ import ShipmentHistory from './pages/shipment/ShipmentHistory'
  * 실제 서명 검증은 서버 authMiddleware에서 수행
  */
 const isAuthenticated = () => {
-  const token = localStorage.getItem('mes_token')
-  if (!token) return false
+  const token = localStorage.getItem('mes_access_token')
+  const refreshToken = localStorage.getItem('mes_refresh_token')
+
+  // refresh token이 없으면 완전 미인증
+  if (!refreshToken) return false
+  // access token이 없어도 refresh token이 있으면 api.js 인터셉터가 갱신 처리
+  if (!token) return true
 
   try {
-    // JWT payload 디코딩 (Base64) → 만료 시간만 확인
     const payload = JSON.parse(atob(token.split('.')[1]))
     if (payload.exp && Date.now() / 1000 > payload.exp) {
-      // 만료된 토큰 자동 제거
-      localStorage.removeItem('mes_token')
-      localStorage.removeItem('mes_user')
-      return false
+      // access token 만료 → 제거 후 refresh 흐름에 맡김
+      localStorage.removeItem('mes_access_token')
     }
     return true
   } catch {
-    // 파싱 실패 시 토큰 제거
-    localStorage.removeItem('mes_token')
-    localStorage.removeItem('mes_user')
-    return false
+    localStorage.removeItem('mes_access_token')
+    return !!localStorage.getItem('mes_refresh_token')
   }
 }
 
